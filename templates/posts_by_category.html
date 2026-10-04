@@ -4,26 +4,184 @@
 
 
   <!-- Featured Posts -->
-  <h3 class="text-uppercase text-warning" style="letter-spacing: 2px;">Category - {{ category }}</h3>
-  <div class="row mb-2">
-    {% if posts %}
-    {% for post in posts %}
-    <div class="col-md-6">
-      <div class="card border-0" >
-        <div class="card-body">
-          <h3><a href="{% url 'blogs' post.slug  %}" class="text-dark">{{ post.title }}</a></h3>
-          <small class="mb-1 text-muted">{{ post.created_at | timesince }} ago | {{ post.author }}</small>
-          <p class="card-text">{{ post.short_description | truncatewords:25 }}</p>
-        </div>
-      </div>
+  <style>
+    .category-page {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+    }
+
+    .category-heading {
+        margin-bottom: 25px;
+    }
+
+    .category-heading h3 {
+        margin: 0;
+        color: #f59e0b;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .category-posts {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .category-post {
+        display: flex;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        transition: all 0.25s ease;
+    }
+
+    .category-post:hover {
+        transform: translateY(-4px);
+        border-color: #f59e0b;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .category-post-image {
+        width: 180px;
+        min-width: 180px;
+        height: 180px;
+        overflow: hidden;
+        background: #f3f4f6;
+    }
+
+    .category-post-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .category-post:hover .category-post-image img {
+        transform: scale(1.05);
+    }
+
+    .category-post-content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .category-post-title {
+        margin: 0 0 8px;
+        font-size: 19px;
+        line-height: 1.4;
+        font-weight: 700;
+    }
+
+    .category-post-title a {
+        color: #111827;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .category-post-title a:hover {
+        color: #f59e0b;
+    }
+
+    .category-post-meta {
+        display: block;
+        margin-bottom: 12px;
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .category-post-description {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .no-posts {
+        padding: 25px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        color: #6b7280;
+    }
+
+    @media (max-width: 1100px) {
+        .category-posts {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .category-page {
+            padding: 25px 15px 50px;
+        }
+
+        .category-heading h3 {
+            font-size: 20px;
+        }
+
+        .category-post {
+            flex-direction: column;
+        }
+
+        .category-post-image {
+            width: 100%;
+            min-width: 100%;
+            height: 220px;
+        }
+
+        .category-post-content {
+            padding: 18px;
+        }
+    }
+</style>
+
+<div class="category-page">
+    <div class="category-heading">
+        <h3>Category - {{ category }}</h3>
     </div>
-    {% endfor %}
+
+    {% if posts %}
+        <div class="category-posts">
+            {% for post in posts %}
+                <article class="category-post">
+                    <div class="category-post-image">
+                        <a href="{% url 'blogs' post.slug %}">
+                            <img
+                                src="{{ post.featured_image.url }}"
+                                alt="{{ post.title }}"
+                            >
+                        </a>
+                    </div>
+
+                    <div class="category-post-content">
+                        <h3 class="category-post-title">
+                            <a href="{% url 'blogs' post.slug %}">
+                                {{ post.title }}
+                            </a>
+                        </h3>
+
+                        <small class="category-post-meta">
+                            {{ post.created_at|timesince }} ago
+                            &nbsp;•&nbsp;
+                            {{ post.author }}
+                        </small>
+
+                        <p class="category-post-description">
+                            {{ post.short_description|truncatewords:25 }}
+                        </p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
     {% else %}
-    <p>No posts found</p>
+        <p class="no-posts">
+            No posts found in this category.
+        </p>
     {% endif %}
-    
-  </div>
-
 </div>
-
 {% endblock %}

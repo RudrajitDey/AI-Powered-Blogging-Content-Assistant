@@ -2,32 +2,309 @@
 
 {% block content %}
 
-<div class="row">
-    <!-- Left sidebar -->
-    <!-- load the sidebar here -->
-    {% include 'dashboard/sidebar.html' %}
+<style>
+    .dashboard-page {
+        min-height: 100vh;
+        background: #f5f7fb;
+        padding: 35px 25px 60px;
+    }
 
-    <!-- Right side content -->
-    <div class="col-md-9">
-        <span>Logged in as <b>{{ user }}</b></span>
-        <div class="row">
-            <div class="col">
-                <div class="card border-default mb-3">
-                    <div class="card-header text-center text-uppercase font-weight-bold">All Categories</div>
-                    <div class="card-body text-dark">
-                        <h5 class="card-title text-center">{{ category_count }}</h5>
+    .dashboard-container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 25px;
+    }
+
+    /* Main Content */
+
+    .dashboard-content {
+        min-width: 0;
+    }
+
+    .dashboard-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding: 25px 30px;
+        background: #ffffff;
+        border: 1px solid #e8ebf0;
+        border-radius: 16px;
+    }
+
+    .dashboard-heading h1 {
+        margin: 0 0 6px;
+        color: #111827;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .dashboard-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .logged-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        color: #4b5563;
+        font-size: 14px;
+    }
+
+    .user-dot {
+        width: 9px;
+        height: 9px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+    }
+
+    /* Statistics */
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        padding: 25px;
+        background: #ffffff;
+        border: 1px solid #e8ebf0;
+        border-radius: 16px;
+        transition: all 0.25s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        border-color: #f59e0b;
+        box-shadow: 0 15px 35px rgba(17, 24, 39, 0.08);
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 130px;
+        height: 130px;
+        right: -45px;
+        top: -45px;
+        background: rgba(245, 158, 11, 0.08);
+        border-radius: 50%;
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .stat-title {
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff7e6;
+        color: #d97706;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .stat-number {
+        color: #111827;
+        font-size: 36px;
+        line-height: 1;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .stat-description {
+        margin: 10px 0 0;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    /* Welcome Panel */
+
+    .welcome-card {
+        position: relative;
+        overflow: hidden;
+        padding: 30px;
+        background: linear-gradient(135deg, #111827, #1f2937);
+        border-radius: 16px;
+        color: #ffffff;
+    }
+
+    .welcome-card::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        right: -80px;
+        top: -100px;
+        background: rgba(245, 158, 11, 0.18);
+        border-radius: 50%;
+        filter: blur(5px);
+    }
+
+    .welcome-card h2 {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 8px;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .welcome-card p {
+        position: relative;
+        z-index: 1;
+        max-width: 650px;
+        margin: 0;
+        color: #d1d5db;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 991px) {
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 767px) {
+        .dashboard-page {
+            padding: 20px 15px 40px;
+        }
+
+        .dashboard-top {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 18px;
+            padding: 22px;
+        }
+
+        .dashboard-heading h1 {
+            font-size: 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-card {
+            padding: 22px;
+        }
+
+        .welcome-card {
+            padding: 25px;
+        }
+    }
+</style>
+
+<div class="dashboard-page">
+    <div class="dashboard-container">
+
+        <div class="dashboard-layout">
+
+            <!-- Sidebar -->
+            {% include 'dashboard/sidebar.html' %}
+
+            <!-- Dashboard Content -->
+            <main class="dashboard-content">
+
+                <!-- Dashboard Header -->
+                <div class="dashboard-top">
+                    <div class="dashboard-heading">
+                        <h1>Dashboard</h1>
+                        <p>Manage your blog and monitor your content.</p>
+                    </div>
+
+                    <div class="logged-user">
+                        <span class="user-dot"></span>
+                        <span>Logged in as <b>{{ user }}</b></span>
                     </div>
                 </div>
-            </div>
 
-            <div class="col">
-                <div class="card border-default mb-3">
-                    <div class="card-header text-center text-uppercase font-weight-bold">All posts</div>
-                    <div class="card-body text-dark">
-                        <h5 class="card-title text-center">{{ blogs_count }}</h5>
+                <!-- Statistics -->
+                <div class="stats-grid">
+
+                    <!-- Categories -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">All Categories</span>
+                            <div class="stat-icon">C</div>
+                        </div>
+
+                        <h2 class="stat-number">
+                            {{ category_count }}
+                        </h2>
+
+                        <p class="stat-description">
+                            Total blog categories
+                        </p>
                     </div>
+
+                    <!-- Posts -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">All Posts</span>
+                            <div class="stat-icon">P</div>
+                        </div>
+
+                        <h2 class="stat-number">
+                            {{ blogs_count }}
+                        </h2>
+
+                        <p class="stat-description">
+                            Published blog articles
+                        </p>
+                    </div>
+
                 </div>
-            </div>
+
+                <!-- Welcome -->
+                <div class="welcome-card">
+                    <h2>Welcome back, {{ user }} 👋</h2>
+                    <p>
+                        Keep your blog organized, publish useful content,
+                        manage your categories, and continue building your
+                        audience from your dashboard.
+                    </p>
+                </div>
+
+            </main>
+
         </div>
     </div>
 </div>

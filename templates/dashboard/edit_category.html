@@ -4,22 +4,156 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-<div class="row">
-    <!-- Left sidebar -->
-    <!-- load the sidebar here -->
+<style>
+    .dashboard-layout {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+    }
+
+    .category-form-page {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .category-form-header {
+        margin-bottom: 25px;
+    }
+
+    .category-form-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 26px;
+        font-weight: 800;
+    }
+
+    .category-form-card {
+        width: 100%;
+        max-width: 600px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 28px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+    }
+
+    .category-form {
+        width: 100%;
+    }
+
+    .category-form input,
+    .category-form select,
+    .category-form textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+        color: #374151;
+        background: #ffffff;
+        box-sizing: border-box;
+        transition: 0.2s;
+    }
+
+    .category-form input:focus,
+    .category-form select:focus,
+    .category-form textarea:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+
+    .category-form label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .category-form .form-group {
+        margin-bottom: 18px;
+    }
+
+    .category-form .errorlist {
+        margin: 5px 0;
+        padding-left: 18px;
+        color: #dc2626;
+        font-size: 13px;
+    }
+
+    .category-submit {
+        display: inline-block;
+        padding: 11px 24px;
+        border: none;
+        border-radius: 8px;
+        background: #f59e0b;
+        color: #111827;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .category-submit:hover {
+        background: #111827;
+        color: #ffffff;
+    }
+
+    @media (max-width: 991px) {
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .category-form-card {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .dashboard-layout {
+            padding: 20px 15px 40px;
+        }
+
+        .category-form-card {
+            padding: 20px;
+        }
+
+        .category-form-header h2 {
+            font-size: 22px;
+        }
+    }
+</style>
+
+<div class="dashboard-layout">
+    <!-- Left Sidebar -->
     {% include 'dashboard/sidebar.html' %}
 
-    <!-- Right side content -->
-    <div class="col-md-9">
-        <h2>Edit Category</h2>
-        
-        <form action="{% url 'edit_category' category.id %}" method="POST" style="width:500px;">
-            {% csrf_token %}
-            {{ form | crispy }}
-            <button type="submit" class="btn btn-warning">Submit</button>
-        </form>
-        <br>
-    </div>
-</div>
+    <!-- Right Content -->
+    <main class="category-form-page">
+        <div class="category-form-header">
+            <h2>Edit Category</h2>
+        </div>
 
+        <div class="category-form-card">
+            <form
+                action="{% url 'edit_category' category.id %}"
+                method="POST"
+                class="category-form"
+            >
+                {% csrf_token %}
+
+                {{ form|crispy }}
+
+                <button type="submit" class="category-submit">
+                    Update Category
+                </button>
+            </form>
+        </div>
+    </main>
+</div>
 {% endblock %}

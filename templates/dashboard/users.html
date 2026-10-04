@@ -3,53 +3,337 @@
 
 {% block content %}
 
-<div class="row">
-    <!-- Left sidebar -->
-    <!-- load the sidebar here -->
+<style>
+    .dashboard-layout {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 30px;
+    }
+
+    .users-page {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .users-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .users-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 26px;
+        font-weight: 800;
+    }
+
+    .add-user-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        background: #111827;
+        color: #ffffff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .add-user-btn:hover {
+        background: #f59e0b;
+        color: #111827;
+    }
+
+    .users-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+    }
+
+    .users-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+    }
+
+    .users-table th {
+        padding: 15px 18px;
+        text-align: left;
+        background: #f9fafb;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .users-table td {
+        padding: 16px 18px;
+        color: #4b5563;
+        font-size: 14px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+    }
+
+    .users-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .users-table tbody tr:hover {
+        background: #fffaf0;
+    }
+
+    .users-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .user-number {
+        color: #9ca3af;
+        font-weight: 600;
+    }
+
+    .user-name {
+        color: #111827;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .user-username {
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .user-email {
+        color: #6b7280;
+    }
+
+    .status-icon {
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .status-yes {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .status-no {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .user-action {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 15px;
+        transition: 0.2s;
+    }
+
+    .edit-action {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .edit-action:hover {
+        background: #059669;
+        color: #ffffff;
+    }
+
+    .delete-action {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .delete-action:hover {
+        background: #dc2626;
+        color: #ffffff;
+    }
+
+    .permission-message {
+        padding: 20px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        color: #b91c1c;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .empty-users {
+        text-align: center;
+        padding: 40px !important;
+        color: #9ca3af !important;
+    }
+
+    @media (max-width: 991px) {
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .users-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .add-user-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="dashboard-layout">
+    <!-- Left Sidebar -->
     {% include 'dashboard/sidebar.html' %}
 
-    <!-- Right side content -->
-    <div class="col-md-9">
-      {% if perms.auth.view_user %}
-        <h2>All Users</h2>
-        <a href="{% url 'add_user' %}" class="btn btn-dark text-light float-right mb-2">Add User</a>
-        <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Full Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Active</th>
-                <th>Staff</th>
-                <th>Superuser</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-              <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ user.first_name }} {{ user.last_name }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{% if user.is_active %}<i class="fa fa-check text-success"></i>{% else %}<i class="fa fa-times text-danger"></i>{% endif %}</td>
-                <td>{% if user.is_staff %}<i class="fa fa-check text-success"></i>{% else %}<i class="fa fa-times text-danger"></i>{% endif %}</td>
-                <td>{% if user.is_superuser %}<i class="fa fa-check text-success"></i>{% else %}<i class="fa fa-times text-danger"></i>{% endif %}</td>
-                <td>
-                    <a href="{% url 'edit_user' user.id %}"><i class="fa fa-edit text-success"></i></a>
-                    &nbsp;
-                    <a href="{% url 'delete_user' user.id %}"><i class="fa fa-trash text-danger"></i></a>
-                </td>
-              </tr>
-            {% endfor %}
-              
-            </tbody>
-          </table>
-          {% else %}
-          <h5>You do not have permission to view this page</h5>
+    <!-- Right Users Content -->
+    <main class="users-page">
+        {% if perms.auth.view_user %}
+            <div class="users-header">
+                <h2>All Users</h2>
+
+                <a href="{% url 'add_user' %}" class="add-user-btn">
+                    + Add User
+                </a>
+            </div>
+
+            <div class="users-table-wrapper">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Active</th>
+                            <th>Staff</th>
+                            <th>Superuser</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td class="user-number">
+                                    {{ forloop.counter }}
+                                </td>
+
+                                <td class="user-name">
+                                    {{ user.first_name }} {{ user.last_name }}
+                                </td>
+
+                                <td class="user-username">
+                                    {{ user.username }}
+                                </td>
+
+                                <td class="user-email">
+                                    {{ user.email }}
+                                </td>
+
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="status-icon status-yes">
+                                            ✓
+                                        </span>
+                                    {% else %}
+                                        <span class="status-icon status-no">
+                                            ✕
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if user.is_staff %}
+                                        <span class="status-icon status-yes">
+                                            ✓
+                                        </span>
+                                    {% else %}
+                                        <span class="status-icon status-no">
+                                            ✕
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if user.is_superuser %}
+                                        <span class="status-icon status-yes">
+                                            ✓
+                                        </span>
+                                    {% else %}
+                                        <span class="status-icon status-no">
+                                            ✕
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <div class="user-actions">
+                                        <a
+                                            href="{% url 'edit_user' user.id %}"
+                                            class="user-action edit-action"
+                                            title="Edit User"
+                                        >
+                                            ✎
+                                        </a>
+
+                                        <a
+                                            href="{% url 'delete_user' user.id %}"
+                                            class="user-action delete-action"
+                                            title="Delete User"
+                                        >
+                                            🗑
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8" class="empty-users">
+                                    No users found.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+            <div class="permission-message">
+                You do not have permission to view this page.
+            </div>
         {% endif %}
-    </div>
+    </main>
 </div>
 
 {% endblock %}

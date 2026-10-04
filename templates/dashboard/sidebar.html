@@ -1,11 +1,191 @@
-<div class="col-md-3">
-    <div class="nav flex-column nav-pills bg-light" aria-orientation="vertical">
-        <a href="{% url 'dashboard' %}" class="nav-link text-dark {% if '/dashboard/' == request.path %}bg-warning{% endif %}">Dashboard</a>
+<style>
+    .dashboard-sidebar {
+        width: 250px;
+    }
+
+    .sidebar-menu {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-brand {
+        padding: 15px 14px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-brand h3 {
+        margin: 0;
+        color: #111827;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .sidebar-brand span {
+        color: #f59e0b;
+    }
+
+    .sidebar-brand p {
+        margin: 5px 0 0;
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        margin-bottom: 5px;
+        border-radius: 10px;
+        color: #4b5563;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        border-radius: 8px;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 800;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+        background: #fff8e6;
+        color: #b77900;
+        transform: translateX(3px);
+    }
+
+    .sidebar-link:hover .sidebar-icon {
+        background: #f59e0b;
+        color: #111827;
+    }
+
+    .sidebar-link.active {
+        background: #f59e0b;
+        color: #111827;
+    }
+
+    .sidebar-link.active .sidebar-icon {
+        background: rgba(255, 255, 255, 0.6);
+        color: #111827;
+    }
+
+    .sidebar-divider {
+        height: 1px;
+        background: #f0f0f0;
+        margin: 12px 5px;
+    }
+
+    .sidebar-link.logout {
+        color: #dc2626;
+    }
+
+    .sidebar-link.logout:hover {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .sidebar-link.logout .sidebar-icon {
+        color: #dc2626;
+        background: #fef2f2;
+    }
+
+    @media (max-width: 991px) {
+        .dashboard-sidebar {
+            width: 100%;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .sidebar-brand {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
+            width: auto;
+            margin-bottom: 0;
+        }
+
+        .sidebar-divider {
+            display: none;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .sidebar-link {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+
+<div class="dashboard-sidebar">
+    <nav class="sidebar-menu">
+
+        <div class="sidebar-brand">
+            <h3>Django<span>Blog</span></h3>
+            <p>Administration Panel</p>
+        </div>
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="sidebar-link {% if '/dashboard/' == request.path %}active{% endif %}"
+        >
+            <span class="sidebar-icon">D</span>
+            <span>Dashboard</span>
+        </a>
+
         {% if perms.auth.view_user %}
-        <a href="{% url 'users' %}" class="nav-link text-dark {% if '/users/' in request.path %}bg-warning{% endif %}">Users</a>
+            <a
+                href="{% url 'users' %}"
+                class="sidebar-link {% if '/users/' in request.path %}active{% endif %}"
+            >
+                <span class="sidebar-icon">U</span>
+                <span>Users</span>
+            </a>
         {% endif %}
-        <a href="{% url 'categories' %}" class="nav-link text-dark {% if '/categories/' in request.path %}bg-warning{% endif %}">Categories</a>
-        <a href="{% url 'posts' %}" class="nav-link text-dark {% if '/posts/' in request.path %}bg-warning{% endif %}">Posts</a>
-        <a href="" class="nav-link text-dark">Logout</a>
-    </div>
+
+        <a
+            href="{% url 'categories' %}"
+            class="sidebar-link {% if '/categories/' in request.path %}active{% endif %}"
+        >
+            <span class="sidebar-icon">C</span>
+            <span>Categories</span>
+        </a>
+
+        <a
+            href="{% url 'posts' %}"
+            class="sidebar-link {% if '/posts/' in request.path %}active{% endif %}"
+        >
+            <span class="sidebar-icon">P</span>
+            <span>Posts</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <a href="{% url 'logout' %}" class="sidebar-link logout">
+            <span class="sidebar-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </nav>
 </div>

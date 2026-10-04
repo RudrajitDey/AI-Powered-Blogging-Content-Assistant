@@ -4,10 +4,165 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-<h3 class="text-center">Register</h3>
-<form action="{% url 'register' %}" method="POST" style="width:500px; margin:auto;">
-    {% csrf_token %}
-    {{ form | crispy }}
-    <button type="submit" class="btn btn-warning">Submit</button>
-</form>
+<style>
+    .register-page {
+        width: 100%;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 20px;
+        background: #f8fafc;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 500px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .register-header h3 {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .register-header span {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .register-form {
+        width: 100%;
+    }
+
+    .register-form input,
+    .register-form select,
+    .register-form textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+        color: #374151;
+        background: #ffffff;
+        box-sizing: border-box;
+        transition: 0.2s;
+    }
+
+    .register-form input:focus,
+    .register-form select:focus,
+    .register-form textarea:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+
+    .register-form label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .register-form .form-group {
+        margin-bottom: 18px;
+    }
+
+    .register-form .errorlist {
+        margin: 5px 0;
+        padding-left: 18px;
+        color: #dc2626;
+        font-size: 13px;
+    }
+
+    .register-submit {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border: none;
+        border-radius: 8px;
+        background: #f59e0b;
+        color: #111827;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .register-submit:hover {
+        background: #111827;
+        color: #ffffff;
+    }
+
+    .register-footer {
+        text-align: center;
+        margin-top: 22px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .register-footer a {
+        color: #b77900;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .register-footer a:hover {
+        color: #111827;
+    }
+
+    @media (max-width: 576px) {
+        .register-page {
+            padding: 30px 15px;
+        }
+
+        .register-card {
+            padding: 25px 20px;
+        }
+
+        .register-header h3 {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="register-page">
+    <div class="register-card">
+        <div class="register-header">
+            <h3>Create Account</h3>
+            <span>Join the DjangoBlog community</span>
+        </div>
+
+        <form
+            action="{% url 'register' %}"
+            method="POST"
+            class="register-form"
+        >
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button type="submit" class="register-submit">
+                Create Account
+            </button>
+        </form>
+
+        <div class="register-footer">
+            Already have an account?
+            <a href="{% url 'login' %}">Login here</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
