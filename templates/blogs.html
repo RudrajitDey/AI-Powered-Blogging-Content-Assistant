@@ -689,7 +689,7 @@
 <aside class="col-lg-4 blog-sidebar">
 
     <!-- AI Blog Assistant -->
-    <div class="blog-ai-chatbot">
+    <div class="blog-ai-chatbot" data-blog-id="{{ single_blog.id }}">
         <div class="chatbot-header">
             <div class="chatbot-title">
                 <div class="chatbot-icon">AI</div>
@@ -800,5 +800,178 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+<script>
+    const chatbot = document.querySelector(".blog-ai-chatbot");
+    const chatbotForm = document.getElementById("chatbotForm");
+    const chatbotInput = document.getElementById("chatbotInput");
+    const chatbotBody = document.getElementById("chatbotBody");
+    const suggestionButtons = document.querySelectorAll(".suggestion-btn");
+
+    const blogId = chatbot.dataset.blogId;
+
+
+    function addUserMessage(message) {
+        const messageHTML = `
+            <div class="chat-message user-message">
+                <div class="message-content">
+                    <p>${escapeHTML(message)}</p>
+                </div>
+            </div>
+        `;
+
+        chatbotBody.insertAdjacentHTML("beforeend", messageHTML);
+
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }
+
+
+    function addBotMessage(message) {
+        const messageHTML = `
+            <div class="chat-message bot-message">
+                <div class="message-avatar">AI</div>
+                <div class="message-content">
+                    <p>${escapeHTML(message)}</p>
+                </div>
+            </div>
+        `;
+
+        chatbotBody.insertAdjacentHTML("beforeend", messageHTML);
+
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }
+
+
+    function addLoadingMessage() {
+        const messageHTML = `
+            <div class="chat-message bot-message" id="aiLoadingMessage">
+                <div class="message-avatar">AI</div>
+                <div class="message-content">
+                    <p>Thinking...</p>
+                </div>
+            </div>
+        `;
+
+        chatbotBody.insertAdjacentHTML("beforeend", messageHTML);
+
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }
+
+
+    function removeLoadingMessage() {
+        const loadingMessage = document.getElementById(
+            "aiLoadingMessage"
+        );
+
+        if (loadingMessage) {
+            loadingMessage.remove();
+        }
+    }
+
+
+    async function sendMessage(question) {
+        if (!question) {
+            return;
+        }
+
+        addUserMessage(question);
+
+        chatbotInput.value = "";
+
+        addLoadingMessage();
+
+        try {
+            const formData = new FormData();
+
+            formData.append("question", question);
+
+            const response = await fetch(
+                `/chatbot/chat/${blogId}/`,
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+
+            removeLoadingMessage();
+
+            if (data.success) {
+                addBotMessage(data.answer);
+            } else {
+                addBotMessage(
+                    data.error || "Something went wrong."
+                );
+            }
+
+        } catch (error) {
+            console.error("Chatbot Error:", error);
+
+            removeLoadingMessage();
+
+            addBotMessage(
+                "Sorry, something went wrong. Please try again."
+            );
+        }
+    }
+
+
+    chatbotForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const question = chatbotInput.value.trim();
+
+        sendMessage(question);
+    });
+
+
+    suggestionButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const question = button.textContent.trim();
+
+            sendMessage(question);
+        });
+    });
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(
+                        cookie.substring(name.length + 1)
+                    );
+
+                    break;
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+
+
+    function escapeHTML(text) {
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+    }
+</script>
 
 {% endblock %}
